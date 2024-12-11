@@ -3,12 +3,15 @@
 <!DOCTYPE html>
 <script runat="server">
 
-    using System.Data.SQLite;
-    using System.Data;
-    using System.Collections.Generic;
+    private string databasePath;
+    private string connectionString;
 
-    string databasePath = Server.MapPath("~/../healthcare.db"); 
-string connectionString = $"Data Source={databasePath};Version=3;";
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        // Aquí puedes usar Server.MapPath ya que Page_Load es un método no estático
+        databasePath = Server.MapPath("~/../healthcare.db");
+        connectionString = $"Data Source={databasePath};Version=3;";
+    }
 
     private static List<Patient> patients = new List<Patient>();
     private static List<Record> records = new List<Record>();
@@ -37,7 +40,24 @@ string connectionString = $"Data Source={databasePath};Version=3;";
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-        // crear paciente
+        string name = TextBox1.Text;
+        string dob = TextBox2.Text;
+        string address = TextBox3.Text;
+        string mobile = TextBox4.Text;
+        string pin = TextBox5.Text;
+
+        using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+        {
+            conn.Open();
+            string query = "INSERT INTO Patients (Name, DOB, Address, Mobile, PIN) VALUES (@Name, @DOB, @Address, @Mobile, @PIN)";
+            SQLiteCommand cmd = new SQLiteCommand(query, conn);
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.Parameters.AddWithValue("@DOB", dob);
+            cmd.Parameters.AddWithValue("@Address", address);
+            cmd.Parameters.AddWithValue("@Mobile", mobile);
+            cmd.Parameters.AddWithValue("@PIN", pin);
+            cmd.ExecuteNonQuery();
+        }
     }
 
     protected void TextBox6_TextChanged(object sender, EventArgs e)
@@ -85,7 +105,7 @@ string connectionString = $"Data Source={databasePath};Version=3;";
         // eliminar record
     }
 
-    
+
 </script>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
