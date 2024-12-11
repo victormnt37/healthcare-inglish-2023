@@ -57,3 +57,5 @@ C:\Users\Victor\source\repos\victormnt37\healthcare-inglish-2023\Healthcare-Fina
 C:\Users\Victor\source\repos\victormnt37\healthcare-inglish-2023\Healthcare-Final-Assessment\Healthcare-Final-Assessment\obj\Debug\Healthca.C912B8B2.Up2Date
 C:\Users\Victor\source\repos\victormnt37\healthcare-inglish-2023\Healthcare-Final-Assessment\Healthcare-Final-Assessment\obj\Debug\Healthcare-Final-Assessment.dll
 C:\Users\Victor\source\repos\victormnt37\healthcare-inglish-2023\Healthcare-Final-Assessment\Healthcare-Final-Assessment\obj\Debug\Healthcare-Final-Assessment.pdb
+C:\Users\Victor\source\repos\victormnt37\healthcare-inglish-2023\Healthcare-Final-Assessment\Healthcare-Final-Assessment\bin\System.Data.SQLite.dll
+C:\Users\Victor\source\repos\victormnt37\healthcare-inglish-2023\Healthcare-Final-Assessment\Healthcare-Final-Assessment\bin\System.Data.SQLite.xml

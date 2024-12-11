@@ -30,7 +30,7 @@
             string databasePath = Server.MapPath("~/healthcare.db");
             string connectionString = $"Data Source={databasePath};Version=3;";
 
-            string query = "SELECT isDoctor FROM Users WHERE Username = @Username AND Password = @Password";
+            string query = "SELECT isDoctor FROM Users WHERE name = @Username AND PIN = @Password";
 
             try
             {
@@ -72,7 +72,7 @@
             }
             catch (Exception ex)
             {
-                Response.Write("<script>alert('Error connecting to the database: " + ex.Message + "');</script>");
+                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "alert(''Error connecting to the database: \" + ex.Message + \"'');", true);
             }
         }
     </script>
