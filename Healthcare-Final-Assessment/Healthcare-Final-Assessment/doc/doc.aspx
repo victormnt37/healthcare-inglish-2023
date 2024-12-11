@@ -8,37 +8,41 @@
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        string databasePath = Server.MapPath("~/../healthcare.db");
+        string databasePath = Server.MapPath("~/healthcare.db");
+
         string connectionString = $"Data Source={databasePath};Version=3;";
 
         using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
         {
             connection.Open();
 
-            string query = "SELECT * FROM usuarios";
+            string query = "SELECT * FROM users";
 
             using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
             {
-                using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        // Crear un nuevo objeto Patient y asignar los valores desde la base de datos
-                        Patient patient = new Patient
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("id")),
-                            Name = reader.GetString(reader.GetOrdinal("name")),
-                            DOB = reader.GetString(reader.GetOrdinal("DOB")),
-                            Address = reader.GetString(reader.GetOrdinal("address")),
-                            Mobile = reader.GetString(reader.GetOrdinal("mobile")),
-                            PIN = reader.GetString(reader.GetOrdinal("PIN"))
-                        };
+                //using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
+                //{
+                //    while (reader.Read())
+                //    {
+                //        //Patient patient = new Patient
+                //        //{
+                //        //    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                //        //    Name = reader.GetString(reader.GetOrdinal("name")),
+                //        //    DOB = reader.GetString(reader.GetOrdinal("DOB")),
+                //        //    Address = reader.GetString(reader.GetOrdinal("address")),
+                //        //    Mobile = reader.GetInt32(reader.GetOrdinal("mobile")),
+                //        //    PIN = reader.GetInt32(reader.GetOrdinal("PIN"))
+                //        //};
 
-                        // Añadir el paciente a la lista
-                        patients.Add(patient);
-                        ListBox1.Items.Add(patient.Name);
-                    }
-                }
+                //        // Añadir el paciente a la lista
+                //        // patients.Add(patient);
+                //        ListBox1.Items.Add(reader.GetString("name"));
+                //    }
+                //}
+
+                object result = command.ExecuteScalar();
+
+                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "" + result.ToString(), true);
             }
         }
     }
@@ -54,8 +58,8 @@
         public string Name { get; set; }
         public string DOB { get; set; }
         public string Address { get; set; }
-        public string Mobile { get; set; }
-        public string PIN { get; set; }
+        public int Mobile { get; set; }
+        public int PIN { get; set; }
     }
 
     public class Record
@@ -74,13 +78,14 @@
         string address = TextBox3.Text;
         string mobile = TextBox4.Text;
         string pin = TextBox5.Text;
+        string password = TextBox16.Text;
 
         try
         {
             using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
             {
                 conn.Open();
-                string query = "INSERT INTO Users (Name, DOB, Address, Mobile, PIN) VALUES (@Name, @DOB, @Address, @Mobile, @PIN)";
+                string query = "INSERT INTO Users (Name, DOB, Address, Mobile, PIN, Password) VALUES (@Name, @DOB, @Address, @Mobile, @PIN, @Password)";
                 using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Name", name);
@@ -88,6 +93,7 @@
                     cmd.Parameters.AddWithValue("@Address", address);
                     cmd.Parameters.AddWithValue("@Mobile", mobile);
                     cmd.Parameters.AddWithValue("@PIN", pin);
+                    cmd.Parameters.AddWithValue("@Password", password);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -99,44 +105,44 @@
     }
 
     protected void TextBox6_TextChanged(object sender, EventArgs e)
-{
-    string searchQuery = TextBox6.Text;
-
-    ListBox1.Items.Clear();
-
-    try
     {
-        using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+        string searchQuery = TextBox6.Text;
+
+        ListBox1.Items.Clear();
+
+        try
         {
-            conn.Open();
-
-            // Crear la consulta SQL para buscar pacientes por nombre
-            string query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
-            using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+            using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
             {
-                cmd.Parameters.AddWithValue("@SearchQuery", "%" + searchQuery + "%");
+                conn.Open();
 
-                using (var reader = cmd.ExecuteReader())
+                // Crear la consulta SQL para buscar pacientes por nombre
+                string query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
+                using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
                 {
-                    // Recorrer los resultados y añadirlos al ListBox
-                    while (reader.Read())
-                    {
-                        string patientName = reader.GetString(reader.GetOrdinal("name"));
-                        int patientId = reader.GetInt32(reader.GetOrdinal("id"));
+                    cmd.Parameters.AddWithValue("@SearchQuery", "%" + searchQuery + "%");
 
-                        // Añadir el paciente encontrado al ListBox
-                        ListBox1.Items.Add(new ListItem(patientName, patientId.ToString()));
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        // Recorrer los resultados y añadirlos al ListBox
+                        while (reader.Read())
+                        {
+                            string patientName = reader.GetString(reader.GetOrdinal("name"));
+                            int patientId = reader.GetInt32(reader.GetOrdinal("id"));
+
+                            // Añadir el paciente encontrado al ListBox
+                            ListBox1.Items.Add(new ListItem(patientName, patientId.ToString()));
+                        }
                     }
                 }
             }
         }
+        catch (Exception ex)
+        {
+            // Manejo de errores en caso de que ocurra alguna excepción
+            ClientScript.RegisterStartupScript(this.GetType(), "SearchError", "alert('Error al buscar paciente: " + ex.Message + "');", true);
+        }
     }
-    catch (Exception ex)
-    {
-        // Manejo de errores en caso de que ocurra alguna excepción
-        ClientScript.RegisterStartupScript(this.GetType(), "SearchError", "alert('Error al buscar paciente: " + ex.Message + "');", true);
-    }
-}
 
 
     protected void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -150,10 +156,10 @@
     protected void Button2_Click(object sender, EventArgs e)
     {
         // guardar cambios del usuario
-         if (currentPatientId == 0)
-         {
+        if (currentPatientId == 0)
+        {
             return;
-         }
+        }
 
         string name = TextBox7.Text;
         string dob = TextBox8.Text;
@@ -247,6 +253,9 @@
                 <br />
                 <asp:Label ID="Label6" runat="server" Text="PIN:"></asp:Label>
                 <asp:TextBox ID="TextBox5" runat="server"></asp:TextBox>
+                <br />
+                <asp:Label ID="Label24" runat="server" Text="Password:"></asp:Label>
+                <asp:TextBox ID="TextBox16" runat="server"></asp:TextBox>
                 <asp:Button ID="Button1" runat="server" Text="Create" OnClick="Button1_Click" />
             </div>
         </div>
@@ -318,3 +327,4 @@
     </form>
 </body>
 </html>
+
