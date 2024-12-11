@@ -8,9 +8,38 @@
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        // Aquí puedes usar Server.MapPath ya que Page_Load es un método no estático
-        databasePath = Server.MapPath("~/../healthcare.db");
-        connectionString = $"Data Source={databasePath};Version=3;";
+        string databasePath = Server.MapPath("~/../healthcare.db");
+        string connectionString = $"Data Source={databasePath};Version=3;";
+
+        using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = "SELECT * FROM usuarios";
+
+            using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
+            {
+                using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        // Crear un nuevo objeto Patient y asignar los valores desde la base de datos
+                        Patient patient = new Patient
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("id")),
+                            Name = reader.GetString(reader.GetOrdinal("name")),
+                            DOB = reader.GetString(reader.GetOrdinal("DOB")),
+                            Address = reader.GetString(reader.GetOrdinal("address")),
+                            Mobile = reader.GetString(reader.GetOrdinal("mobile")),
+                            PIN = reader.GetString(reader.GetOrdinal("PIN"))
+                        };
+
+                        // Añadir el paciente a la lista
+                        patients.Add(patient);
+                    }
+                }
+            }
+        }
     }
 
     private static List<Patient> patients = new List<Patient>();
@@ -46,11 +75,11 @@
         string mobile = TextBox4.Text;
         string pin = TextBox5.Text;
 
-        using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+        using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
         {
             conn.Open();
             string query = "INSERT INTO Patients (Name, DOB, Address, Mobile, PIN) VALUES (@Name, @DOB, @Address, @Mobile, @PIN)";
-            SQLiteCommand cmd = new SQLiteCommand(query, conn);
+            System.Data.SQLite.SQLiteCommand cmd = new System.Data.SQLite.SQLiteCommand(query, conn);
             cmd.Parameters.AddWithValue("@Name", name);
             cmd.Parameters.AddWithValue("@DOB", dob);
             cmd.Parameters.AddWithValue("@Address", address);
@@ -68,11 +97,52 @@
     protected void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
         // seleccionar usuario
+
+        // pedir un usuario
+        // mostrar info en los labels
     }
 
     protected void Button2_Click(object sender, EventArgs e)
     {
         // guardar cambios del usuario
+         if (currentPatientId == 0)
+         {
+            return;
+         }
+
+        string name = TextBox7.Text;
+        string dob = TextBox8.Text;
+        string address = TextBox9.Text;
+        string mobile = TextBox10.Text;
+        string pin = TextBox11.Text;
+
+        string query = "UPDATE users SET name = @Name, DOB = @DOB, address = @Address, mobile = @Mobile, PIN = @PIN WHERE id = @Id";
+
+        try
+        {
+            using (var connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                using (var command = new System.Data.SQLite.SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Name", name);
+                    command.Parameters.AddWithValue("@DOB", dob);
+                    command.Parameters.AddWithValue("@Address", address);
+                    command.Parameters.AddWithValue("@Mobile", mobile);
+                    command.Parameters.AddWithValue("@PIN", pin);
+                    command.Parameters.AddWithValue("@Id", currentPatientId);
+
+                    object result = command.ExecuteScalar();
+                }
+            }
+
+            // modificar datos clase Patient
+        }
+        catch (Exception ex)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "alert(''Error connecting to the database: \" + ex.Message + \"'');", true);
+        }
     }
 
     protected void Button3_Click(object sender, EventArgs e)
