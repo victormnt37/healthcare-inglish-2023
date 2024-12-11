@@ -66,7 +66,6 @@
         public string Treatment { get; set; }
     }
 
-
     protected void Button1_Click(object sender, EventArgs e)
     {
         string name = TextBox1.Text;
@@ -75,24 +74,69 @@
         string mobile = TextBox4.Text;
         string pin = TextBox5.Text;
 
-        using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+        try
         {
-            conn.Open();
-            string query = "INSERT INTO Patients (Name, DOB, Address, Mobile, PIN) VALUES (@Name, @DOB, @Address, @Mobile, @PIN)";
-            System.Data.SQLite.SQLiteCommand cmd = new System.Data.SQLite.SQLiteCommand(query, conn);
-            cmd.Parameters.AddWithValue("@Name", name);
-            cmd.Parameters.AddWithValue("@DOB", dob);
-            cmd.Parameters.AddWithValue("@Address", address);
-            cmd.Parameters.AddWithValue("@Mobile", mobile);
-            cmd.Parameters.AddWithValue("@PIN", pin);
-            cmd.ExecuteNonQuery();
+            using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+            {
+                conn.Open();
+                string query = "INSERT INTO Users (Name, DOB, Address, Mobile, PIN) VALUES (@Name, @DOB, @Address, @Mobile, @PIN)";
+                using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@DOB", dob);
+                    cmd.Parameters.AddWithValue("@Address", address);
+                    cmd.Parameters.AddWithValue("@Mobile", mobile);
+                    cmd.Parameters.AddWithValue("@PIN", pin);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Write($"Error: {ex.Message}");
         }
     }
 
     protected void TextBox6_TextChanged(object sender, EventArgs e)
+{
+    string searchQuery = TextBox6.Text;
+
+    ListBox1.Items.Clear();
+
+    try
     {
-        // buscar paciente
+        using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+        {
+            conn.Open();
+
+            // Crear la consulta SQL para buscar pacientes por nombre
+            string query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
+            using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@SearchQuery", "%" + searchQuery + "%");
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    // Recorrer los resultados y añadirlos al ListBox
+                    while (reader.Read())
+                    {
+                        string patientName = reader.GetString(reader.GetOrdinal("name"));
+                        int patientId = reader.GetInt32(reader.GetOrdinal("id"));
+
+                        // Añadir el paciente encontrado al ListBox
+                        ListBox1.Items.Add(new ListItem(patientName, patientId.ToString()));
+                    }
+                }
+            }
+        }
     }
+    catch (Exception ex)
+    {
+        // Manejo de errores en caso de que ocurra alguna excepción
+        ClientScript.RegisterStartupScript(this.GetType(), "SearchError", "alert('Error al buscar paciente: " + ex.Message + "');", true);
+    }
+}
+
 
     protected void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
