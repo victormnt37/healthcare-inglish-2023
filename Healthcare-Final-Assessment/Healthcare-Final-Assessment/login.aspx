@@ -72,7 +72,7 @@
             }
             catch (Exception ex)
             {
-                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "alert('Error connecting to the database: \" + ex.Message + \"');", true);
+                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "alert('Error connecting to the database: " + ex.Message + "');", true);
             }
         }
     </script>
