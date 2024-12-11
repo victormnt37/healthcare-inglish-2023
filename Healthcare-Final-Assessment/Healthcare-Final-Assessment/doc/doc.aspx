@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="doc.aspx.cs" Inherits="Healthcare_Final_Assessment.doc.doc" %>
 
 <!DOCTYPE html>
 <script runat="server">
