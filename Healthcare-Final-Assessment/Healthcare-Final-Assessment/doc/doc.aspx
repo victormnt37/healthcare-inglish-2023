@@ -3,6 +3,38 @@
 <!DOCTYPE html>
 <script runat="server">
 
+    using System.Data.SQLite;
+    using System.Data;
+    using System.Collections.Generic;
+
+    string databasePath = Server.MapPath("~/../healthcare.db"); 
+string connectionString = $"Data Source={databasePath};Version=3;";
+
+    private static List<Patient> patients = new List<Patient>();
+    private static List<Record> records = new List<Record>();
+    private static int currentPatientId = 0;
+    private static int currentRecordId = 0;
+
+    public class Patient
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string DOB { get; set; }
+        public string Address { get; set; }
+        public string Mobile { get; set; }
+        public string PIN { get; set; }
+    }
+
+    public class Record
+    {
+        public int Id { get; set; }
+        public int PatientId { get; set; }
+        public string Date { get; set; }
+        public string Diagnosis { get; set; }
+        public string Treatment { get; set; }
+    }
+
+
     protected void Button1_Click(object sender, EventArgs e)
     {
         // crear paciente
