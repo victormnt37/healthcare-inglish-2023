@@ -36,6 +36,7 @@
 
                         // Añadir el paciente a la lista
                         patients.Add(patient);
+                        ListBox1.Items.Add(patient.Name);
                     }
                 }
             }
