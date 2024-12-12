@@ -63,11 +63,6 @@
 
                 string query = "SELECT * FROM users";
 
-                //if (searchQuery != "") // TODO: cuando se vuelve a cargar la pagina en el box buscar pone x y no busca
-                //{
-                //    query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
-                //}
-
                 using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
                 {
                     using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
@@ -136,6 +131,7 @@
         // buscar pacientes
         string searchQuery = TextBox6.Text;
 
+        patients.Clear();
         ListBox1.Items.Clear();
 
         try
@@ -153,10 +149,19 @@
                     {
                         while (reader.Read())
                         {
-                            string patientName = reader.GetString(reader.GetOrdinal("name"));
-                            int patientId = reader.GetInt32(reader.GetOrdinal("id"));
 
-                            ListBox1.Items.Add(new ListItem(patientName, patientId.ToString()));
+                            Patient patient = new Patient
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Name = reader.GetString(reader.GetOrdinal("name")),
+                                DOB = reader.GetString(reader.GetOrdinal("DOB")),
+                                Address = reader.GetString(reader.GetOrdinal("address")),
+                                Mobile = reader.GetInt32(reader.GetOrdinal("mobile")),
+                                PIN = reader.GetInt32(reader.GetOrdinal("PIN"))
+                            };
+
+                            ListBox1.Items.Add(new ListItem(patient.Name, patient.Id.ToString()));
+                            patients.Add(patient);
                         }
                     }
                 }
