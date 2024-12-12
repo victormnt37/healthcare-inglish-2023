@@ -194,6 +194,7 @@
             int selectedIndex = ListBox1.SelectedIndex; // recibir por patient id
 
             Patient selectedPatient = patients[selectedIndex];
+            labelId.Text = selectedPatient.Id.ToString();
             TextBox7.Text = selectedPatient.Name;
             TextBox8.Text = selectedPatient.DOB;
             TextBox9.Text = selectedPatient.Address;
@@ -273,6 +274,36 @@
     protected void Button3_Click(object sender, EventArgs e)
     {
         // eliminar el usuario
+        try
+        {
+            if (ListBox1.SelectedItem != null)
+            {
+                // Obtener el ID del usuario seleccionado
+                string selectedId = ListBox1.SelectedValue;
+
+                using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "DELETE FROM Users WHERE id = @Id";
+                    using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", selectedId);
+                        cmd.ExecuteNonQuery();
+
+                    }
+                }
+
+                Response.Write("Usuario eliminado con éxito.");
+            }
+            else
+            {
+                Response.Write("Por favor, selecciona un usuario para eliminar.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Write($"Error: {ex.Message}");
+        }
     }
 
     protected void TextBox12_TextChanged(object sender, EventArgs e)
