@@ -75,12 +75,71 @@
 
     protected void TextBox12_TextChanged(object sender, EventArgs e)
     {
+        string searchQuery = TextBox12.Text;
 
+        records.Clear();
+        ListBox2.Items.Clear();
+
+        try
+        {
+            using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+            {
+                conn.Open();
+
+                string query = "SELECT * FROM records WHERE diagnosis LIKE @SearchQuery";
+                using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@SearchQuery", "%" + searchQuery + "%");
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+
+                            Record patient = new Record
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                PatientId = reader.GetInt32(reader.GetOrdinal("idpat")),
+                                Date = reader.GetString(reader.GetOrdinal("date")),
+                                Diagnosis = reader.GetString(reader.GetOrdinal("diagnosis")),
+                                Treatment = reader.GetString(reader.GetOrdinal("treatment")),
+                            };
+
+                            ListBox2.Items.Add(new ListItem(patient.Diagnosis, patient.Id.ToString()));
+                            records.Add(patient);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "SearchError", "alert('Error searching for patient: " + ex.Message + "');", true);
+        }
     }
 
     protected void ListBox2_SelectedIndexChanged(object sender, EventArgs e)
     {
+        if (ListBox2.SelectedIndex >= 0)
+        {
+            int selectedIndex = ListBox2.SelectedIndex;
 
+            Record selectedRecord = null;
+
+            if (selectedIndex >= 0 && selectedIndex < records.Count)
+            {
+                selectedRecord = records[selectedIndex];
+            }
+
+            if (selectedRecord != null)
+            {
+                labelid_record.Text = selectedRecord.Id.ToString(); 
+
+                labeldate.Text = selectedRecord.Date ?? "Not avalaible";
+                labelDiagnosis.Text = selectedRecord.Diagnosis ?? "Not avalaible"; 
+                labelTreatment.Text = selectedRecord.Treatment ?? "Not avalaible"; 
+            }
+        }
     }
 </script>
 
