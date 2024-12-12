@@ -8,9 +8,9 @@
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        string databasePath = Server.MapPath("~/healthcare.db");
+        databasePath = Server.MapPath("~/healthcare.db");
 
-        string connectionString = $"Data Source={databasePath};Version=3;";
+        connectionString = $"Data Source={databasePath};Version=3;";
 
         using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
         {
