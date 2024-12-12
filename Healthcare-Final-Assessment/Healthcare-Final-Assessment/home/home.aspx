@@ -5,7 +5,7 @@
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-
+         Response.Redirect("~/login.aspx");
     }
 
     protected void Menu1_MenuItemClick(object sender, MenuEventArgs e)
@@ -30,13 +30,15 @@
             </asp:Menu>
 
         </header>
-        <div>
-            <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Login" />
+        <div id="main">
+            <asp:Image ID="Image1" runat="server" ImageUrl="img/stockImageHealthCenter.jpg" />
 
-            <asp:Image ID="Image1" runat="server" />
-            <asp:Label ID="Label3" runat="server" Text="Label"></asp:Label>
-            <asp:Image ID="Image2" runat="server" />
-            <asp:Label ID="Label4" runat="server" Text="Label"></asp:Label>
+            <div id="loginLayout">
+                <asp:Label ID="Label3" runat="server" Text="Welcome to our page!"></asp:Label>
+                <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Login" />
+            </div>
+
+            <asp:Image ID="Image2" runat="server" ImageUrl="img/stockImageHealthCenter2.jpg" />
 
         </div>
         <footer>

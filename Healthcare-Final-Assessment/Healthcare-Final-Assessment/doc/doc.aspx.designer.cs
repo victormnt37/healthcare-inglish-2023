@@ -348,6 +348,15 @@ namespace Healthcare_Final_Assessment.doc
         protected global::System.Web.UI.WebControls.TextBox TextBox12;
 
         /// <summary>
+        /// Control Button8.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button8;
+
+        /// <summary>
         /// Control ListBox2.
         /// </summary>
         /// <remarks>

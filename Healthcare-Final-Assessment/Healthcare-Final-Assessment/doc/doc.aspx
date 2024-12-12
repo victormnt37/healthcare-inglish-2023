@@ -553,7 +553,7 @@
 
                 <asp:Label ID="Label8" runat="server" Text="Search:"></asp:Label>
                 <asp:TextBox ID="TextBox6" runat="server" OnTextChanged="TextBox6_TextChanged"></asp:TextBox>
-                <asp:Button ID="Button7" runat="server" Text="Search" OnClick="Button7_Click" />
+                <asp:Button ID="Button7" runat="server" Text="Search" />
                 <asp:ListBox ID="ListBox1" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ListBox1_SelectedIndexChanged"></asp:ListBox>
             </div>
             <div>
