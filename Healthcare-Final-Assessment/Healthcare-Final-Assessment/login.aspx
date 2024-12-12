@@ -18,6 +18,10 @@
             <asp:Label ID="Label3" runat="server" Text="Password:"></asp:Label>
             <asp:TextBox ID="TextBox2" runat="server"></asp:TextBox>
         </div>
+        <div>
+            <asp:Label ID="Label4" runat="server" Text="PIN:"></asp:Label>
+            <asp:TextBox ID="TextBox4" runat="server"></asp:TextBox>
+        </div>
         <asp:Button ID="Button1" runat="server" Text="Login" OnClick="Button1_Click" />
     </form>
 
@@ -26,6 +30,7 @@
         {
             string username = TextBox1.Text;
             string password = TextBox2.Text;
+            string pin = TextBox4.Text;
 
             string databasePath = Server.MapPath("~/healthcare.db");
             string connectionString = $"Data Source={databasePath};Version=3;";
@@ -51,6 +56,7 @@
                             int isDoctor = Convert.ToInt32(result);
 
                             Session["Username"] = username;
+                            Session["PIN"] = pin;
 
                             if (isDoctor == 0)
                             {
