@@ -203,9 +203,58 @@
             TextBox11.Text = selectedPatient.PIN.ToString();
 
             CurrentPatientIndex = selectedIndex;
+            
+            // Ahora cargar los registros médicos del paciente
+            LoadMedicalRecords(selectedPatient.Id);
         }
     }
 
+    private void LoadMedicalRecords(int patientId)
+{
+    // Limpiar los elementos previos en el ListBox2
+    ListBox2.Items.Clear();
+
+    try
+    {
+        // Consulta para obtener los registros médicos del paciente
+        using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+        {
+            conn.Open();
+
+            // Consulta SQL para obtener los registros médicos del paciente
+            string query = "SELECT * FROM records WHERE PatientId = @PatientId";
+            using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@PatientId", patientId);
+
+                // Ejecutar la consulta y obtener los resultados
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        // Crear un objeto Record para cada registro
+                        Record record = new Record
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("id")),
+                            PatientId = reader.GetInt32(reader.GetOrdinal("PatientId")),
+                            Date = reader.GetString(reader.GetOrdinal("Date")),
+                            Diagnosis = reader.GetString(reader.GetOrdinal("Diagnosis")),
+                            Treatment = reader.GetString(reader.GetOrdinal("Treatment"))
+                        };
+
+                        // Agregar el registro al ListBox2 (por ejemplo, mostrando solo la fecha y diagnóstico)
+                        ListBox2.Items.Add(new ListItem($"Date: {record.Date} - Diagnosis: {record.Diagnosis}", record.Id.ToString()));
+                    }
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        // Manejo de errores si ocurre un problema con la base de datos
+        ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error loading records: {ex.Message}');", true);
+    }
+}
     protected void Button2_Click(object sender, EventArgs e)
     {
         // guardar cambios del usuario
