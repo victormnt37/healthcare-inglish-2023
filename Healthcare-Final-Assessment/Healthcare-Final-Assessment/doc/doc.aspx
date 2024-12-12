@@ -61,7 +61,7 @@
             {
                 connection.Open();
 
-                string query = "SELECT * FROM users";
+                string query = "SELECT * FROM users WHERE isDoctor != 0";
 
                 using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
                 {
@@ -368,7 +368,62 @@
 
     protected void Button4_Click(object sender, EventArgs e)
     {
-        // crear record
+        // Verificar si el paciente está seleccionado
+        if (CurrentPatientIndex < 0)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "ValidationError", "alert('Please select a patient first.');", true);
+            return;
+        }
+
+        // Obtener los valores del formulario
+        string date = TextBox13.Text; // Fecha del registro
+        string diagnosis = TextBox14.Text; // Diagnóstico
+        string treatment = TextBox15.Text; // Tratamiento
+
+        if (string.IsNullOrWhiteSpace(date) || string.IsNullOrWhiteSpace(diagnosis) || string.IsNullOrWhiteSpace(treatment))
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "ValidationError", "alert('All fields must be filled out.');", true);
+            return;
+        }
+
+        // Obtener el PatientId del paciente actual
+        int patientId = patients[CurrentPatientIndex].Id;
+
+        try
+        {
+            // Insertar el nuevo registro en la base de datos
+            using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+            {
+                conn.Open();
+
+                // Consulta SQL para insertar un nuevo registro médico
+                string query = "INSERT INTO records (PatientId, Date, Diagnosis, Treatment) VALUES (@PatientId, @Date, @Diagnosis, @Treatment)";
+                using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@PatientId", patientId);
+                    cmd.Parameters.AddWithValue("@Date", date);
+                    cmd.Parameters.AddWithValue("@Diagnosis", diagnosis);
+                    cmd.Parameters.AddWithValue("@Treatment", treatment);
+
+                    cmd.ExecuteNonQuery(); // Ejecutar la consulta
+                }
+            }
+
+            // Una vez creado el registro, actualizar el ListBox2 con los nuevos registros médicos
+            LoadMedicalRecords(patientId);
+
+            // Limpiar los campos del formulario
+            TextBox13.Text = "";
+            TextBox14.Text = "";
+            TextBox15.Text = "";
+
+            ClientScript.RegisterStartupScript(this.GetType(), "Success", "alert('Medical record created successfully.');", true);
+        }
+        catch (Exception ex)
+        {
+            // Manejo de errores
+            ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error creating record: {ex.Message}');", true);
+        }
     }
 
     protected void Button5_Click(object sender, EventArgs e)
