@@ -23,7 +23,6 @@
         }
     }
 
-
     public class Patient
     {
         public int Id { get; set; }
@@ -138,7 +137,6 @@
         }
     }
 
-
     protected void TextBox6_TextChanged(object sender, EventArgs e)
     {
         // buscar pacientes
@@ -186,7 +184,6 @@
         }
     }
 
-
     protected void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (ListBox1.SelectedIndex >= 0)
@@ -212,6 +209,7 @@
     private void LoadMedicalRecords(int patientId)
     {
         ListBox2.Items.Clear();
+        records.Clear();
 
         try
         {
@@ -252,6 +250,7 @@
         }
 
     }
+
     protected void Button2_Click(object sender, EventArgs e)
     {
         // guardar cambios del usuario
@@ -373,15 +372,14 @@
 
             if (selectedRecord != null)
             {
-                labelid_record.Text = selectedRecord.Id.ToString(); 
+                labelid_record.Text = selectedRecord.Id.ToString();
 
-                TextBox17.Text = selectedRecord.Date ?? "No disponible"; 
-                TextBox18.Text = selectedRecord.Diagnosis ?? "No disponible"; 
-                TextBox19.Text = selectedRecord.Treatment ?? "No disponible"; 
+                TextBox17.Text = selectedRecord.Date ?? "No disponible";
+                TextBox18.Text = selectedRecord.Diagnosis ?? "No disponible";
+                TextBox19.Text = selectedRecord.Treatment ?? "No disponible";
             }
         }
     }
-
 
     protected void Button4_Click(object sender, EventArgs e)
     {
@@ -392,8 +390,8 @@
         }
 
         string date = TextBox13.Text;
-        string diagnosis = TextBox14.Text; 
-        string treatment = TextBox15.Text; 
+        string diagnosis = TextBox14.Text;
+        string treatment = TextBox15.Text;
 
         if (string.IsNullOrWhiteSpace(date) || string.IsNullOrWhiteSpace(diagnosis) || string.IsNullOrWhiteSpace(treatment))
         {
@@ -435,12 +433,85 @@
 
     protected void Button5_Click(object sender, EventArgs e)
     {
-        // guardar cambios del record
+        if (ListBox2.SelectedIndex < 0)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "ValidationError", "alert('Please select a record first.');", true);
+            return;
+        }
+
+        string date = TextBox17.Text;
+        string diagnosis = TextBox18.Text;
+        string treatment = TextBox19.Text;
+
+        if (string.IsNullOrWhiteSpace(date) || string.IsNullOrWhiteSpace(diagnosis) || string.IsNullOrWhiteSpace(treatment))
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "ValidationError", "alert('All fields must be filled out.');", true);
+            return;
+        }
+
+        int recordId = Convert.ToInt32(labelid_record.Text);
+
+        try
+        {
+            using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+            {
+                conn.Open();
+
+                string query = "UPDATE records SET Date = @Date, Diagnosis = @Diagnosis, Treatment = @Treatment WHERE id = @Id";
+                using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Date", date);
+                    cmd.Parameters.AddWithValue("@Diagnosis", diagnosis);
+                    cmd.Parameters.AddWithValue("@Treatment", treatment);
+                    cmd.Parameters.AddWithValue("@Id", recordId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            LoadMedicalRecords(currentPatientId);
+        }
+        catch (Exception ex)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error updating record: {ex.Message}');", true);
+        }
     }
 
     protected void Button6_Click(object sender, EventArgs e)
     {
-        // eliminar record
+        if (ListBox2.SelectedIndex < 0)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "ValidationError", "alert('Please select a record first.');", true);
+            return;
+        }
+
+        int recordId = Convert.ToInt32(labelid_record.Text);
+
+        try
+        {
+            using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+            {
+                conn.Open();
+
+                string query = "DELETE FROM records WHERE id = @Id";
+                using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", recordId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            LoadMedicalRecords(currentPatientId);
+
+            labelid_record.Text = "00";
+            TextBox17.Text = "";
+            TextBox18.Text = "";
+            TextBox19.Text = "";
+        }
+        catch (Exception ex)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error deleting record: {ex.Message}');", true);
+        }
     }
 
 
@@ -482,7 +553,7 @@
 
                 <asp:Label ID="Label8" runat="server" Text="Search:"></asp:Label>
                 <asp:TextBox ID="TextBox6" runat="server" OnTextChanged="TextBox6_TextChanged"></asp:TextBox>
-                <asp:Button ID="Button7" runat="server" Text="Search" />
+                <asp:Button ID="Button7" runat="server" Text="Search" OnClick="Button7_Click" />
                 <asp:ListBox ID="ListBox1" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ListBox1_SelectedIndexChanged"></asp:ListBox>
             </div>
             <div>
@@ -511,8 +582,9 @@
         <asp:Label ID="Label15" runat="server" Text="Medical Records"></asp:Label>
         <div>
 
-            <asp:Label ID="Label16" runat="server" Text="Search:"></asp:Label>
-            <asp:TextBox ID="TextBox12" runat="server" OnTextChanged="TextBox12_TextChanged"></asp:TextBox>
+            <asp:Label ID="Label16" runat="server" Text="Search:" OnClick="Button8_Click"></asp:Label>
+            <asp:TextBox ID="TextBox12" runat="server" OnTextChanged="TextBox12_TextChanged" Width="168px"></asp:TextBox>
+            <asp:Button ID="Button8" runat="server" Text="Search" />
             <asp:ListBox ID="ListBox2" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ListBox2_SelectedIndexChanged"></asp:ListBox>
         </div>
         <div>
