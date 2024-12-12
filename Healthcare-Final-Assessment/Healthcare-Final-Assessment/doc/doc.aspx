@@ -50,56 +50,49 @@
         connectionString = $"Data Source={databasePath};Version=3;";
 
         // lista pacientes
-        ListBox1.Items.Clear();
-
-        string searchQuery = TextBox6.Text;
-
-        using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+        if (!IsPostBack)
         {
-            connection.Open();
+            patients.Clear();
+            ListBox1.Items.Clear();
 
-            string query = "SELECT * FROM users";
+            string searchQuery = TextBox6.Text;
 
-            //if (searchQuery != "") // TODO: cuando se vuelve a cargar la pagina en el box buscar pone x y no busca
-            //{
-            //    query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
-            //}
-
-            using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
+            using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
             {
-                using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
+                connection.Open();
+
+                string query = "SELECT * FROM users";
+
+                //if (searchQuery != "") // TODO: cuando se vuelve a cargar la pagina en el box buscar pone x y no busca
+                //{
+                //    query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
+                //}
+
+                using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
                 {
-                    while (reader.Read())
+                    using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        Patient patient = new Patient
+                        while (reader.Read())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("id")),
-                            Name = reader.GetString(reader.GetOrdinal("name")),
-                            DOB = reader.GetString(reader.GetOrdinal("DOB")),
-                            Address = reader.GetString(reader.GetOrdinal("address")),
-                            Mobile = reader.GetInt32(reader.GetOrdinal("mobile")),
-                            PIN = reader.GetInt32(reader.GetOrdinal("PIN"))
-                        };
+                            Patient patient = new Patient
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Name = reader.GetString(reader.GetOrdinal("name")),
+                                DOB = reader.GetString(reader.GetOrdinal("DOB")),
+                                Address = reader.GetString(reader.GetOrdinal("address")),
+                                Mobile = reader.GetInt32(reader.GetOrdinal("mobile")),
+                                PIN = reader.GetInt32(reader.GetOrdinal("PIN"))
+                            };
 
-                        patients.Add(patient);
-                        ListBox1.Items.Add(reader.GetString(reader.GetOrdinal("name")));
+                            patients.Add(patient);
+                            ListBox1.Items.Add(reader.GetString(reader.GetOrdinal("name")));
+                        }
                     }
 
-                    if (ListBox1.SelectedIndex >= 0)
-                    {
-                        Patient patient = patients[CurrentPatientIndex];
+                    object result = command.ExecuteScalar();
 
-                        TextBox7.Text = patient.Name;
-                        TextBox8.Text = patient.DOB;
-                        TextBox9.Text = patient.Address;
-                        TextBox10.Text = patient.Mobile.ToString();
-                        TextBox11.Text = patient.PIN.ToString();
-                    }
+                    ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "" + result.ToString(), true);
                 }
-
-                object result = command.ExecuteScalar();
-
-                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "" + result.ToString(), true);
             }
         }
     }
@@ -178,15 +171,19 @@
 
     protected void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-        // seleccionar usuario
-        if (ListBox1.SelectedIndex < 0)
+        if (ListBox1.SelectedIndex >= 0)
         {
-            return;
-        }
-        Patient patient = patients[ListBox1.SelectedIndex];
-        currentPatientId = patient.Id;
+            int selectedIndex = ListBox1.SelectedIndex; // recibir por patient id
 
-        CurrentPatientIndex = ListBox1.SelectedIndex;
+            Patient selectedPatient = patients[selectedIndex];
+            TextBox7.Text = selectedPatient.Name;
+            TextBox8.Text = selectedPatient.DOB;
+            TextBox9.Text = selectedPatient.Address;
+            TextBox10.Text = selectedPatient.Mobile.ToString();
+            TextBox11.Text = selectedPatient.PIN.ToString();
+
+            CurrentPatientIndex = selectedIndex;
+        }
     }
 
     protected void Button2_Click(object sender, EventArgs e)
