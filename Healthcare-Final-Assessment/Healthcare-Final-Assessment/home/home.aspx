@@ -18,6 +18,7 @@
 <head runat="server">
     <meta charset="utf-8" />
     <title></title>
+    <link href="home.css" rel="stylesheet" />
 </head>
 <body>
     <form id="form1" runat="server">
@@ -25,13 +26,12 @@
 
             <asp:Label ID="Label2" runat="server" Text="Healthcare center Gandia"></asp:Label>
 
-            <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Log-in" />
-
             <asp:Menu ID="Menu1" runat="server" OnMenuItemClick="Menu1_MenuItemClick">
             </asp:Menu>
 
         </header>
         <div>
+            <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Login" />
 
             <asp:Image ID="Image1" runat="server" />
             <asp:Label ID="Label3" runat="server" Text="Label"></asp:Label>
