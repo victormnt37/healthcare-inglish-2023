@@ -194,6 +194,7 @@
             int selectedIndex = ListBox1.SelectedIndex; // recibir por patient id
 
             Patient selectedPatient = patients[selectedIndex];
+            currentPatientId = selectedPatient.Id;
             labelId.Text = selectedPatient.Id.ToString();
             TextBox7.Text = selectedPatient.Name;
             TextBox8.Text = selectedPatient.DOB;
