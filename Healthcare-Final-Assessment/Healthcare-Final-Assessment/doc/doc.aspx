@@ -6,51 +6,23 @@
     private string databasePath;
     private string connectionString;
 
-    protected void Page_Load(object sender, EventArgs e)
-    {
-        databasePath = Server.MapPath("~/healthcare.db");
-
-        connectionString = $"Data Source={databasePath};Version=3;";
-
-        using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
-        {
-            connection.Open();
-
-            string query = "SELECT * FROM users";
-
-            using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
-            {
-                //using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
-                //{
-                //    while (reader.Read())
-                //    {
-                //        //Patient patient = new Patient
-                //        //{
-                //        //    Id = reader.GetInt32(reader.GetOrdinal("id")),
-                //        //    Name = reader.GetString(reader.GetOrdinal("name")),
-                //        //    DOB = reader.GetString(reader.GetOrdinal("DOB")),
-                //        //    Address = reader.GetString(reader.GetOrdinal("address")),
-                //        //    Mobile = reader.GetInt32(reader.GetOrdinal("mobile")),
-                //        //    PIN = reader.GetInt32(reader.GetOrdinal("PIN"))
-                //        //};
-
-                //        // Añadir el paciente a la lista
-                //        // patients.Add(patient);
-                //        ListBox1.Items.Add(reader.GetString("name"));
-                //    }
-                //}
-
-                object result = command.ExecuteScalar();
-
-                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "" + result.ToString(), true);
-            }
-        }
-    }
-
     private static List<Patient> patients = new List<Patient>();
     private static List<Record> records = new List<Record>();
     private static int currentPatientId = 0;
     private static int currentRecordId = 0;
+
+    private int CurrentPatientIndex
+    {
+        get
+        {
+            return Session["CurrentPatientIndex"] != null ? (int)Session["CurrentPatientIndex"] : -1;
+        }
+        set
+        {
+            Session["CurrentPatientIndex"] = value;
+        }
+    }
+
 
     public class Patient
     {
@@ -71,8 +43,70 @@
         public string Treatment { get; set; }
     }
 
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        databasePath = Server.MapPath("~/healthcare.db");
+
+        connectionString = $"Data Source={databasePath};Version=3;";
+
+        // lista pacientes
+        ListBox1.Items.Clear();
+
+        string searchQuery = TextBox6.Text;
+
+        using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = "SELECT * FROM users";
+
+            //if (searchQuery != "") // TODO: cuando se vuelve a cargar la pagina en el box buscar pone x y no busca
+            //{
+            //    query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
+            //}
+
+            using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
+            {
+                using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Patient patient = new Patient
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("id")),
+                            Name = reader.GetString(reader.GetOrdinal("name")),
+                            DOB = reader.GetString(reader.GetOrdinal("DOB")),
+                            Address = reader.GetString(reader.GetOrdinal("address")),
+                            Mobile = reader.GetInt32(reader.GetOrdinal("mobile")),
+                            PIN = reader.GetInt32(reader.GetOrdinal("PIN"))
+                        };
+
+                        patients.Add(patient);
+                        ListBox1.Items.Add(reader.GetString(reader.GetOrdinal("name")));
+                    }
+
+                    if (ListBox1.SelectedIndex >= 0)
+                    {
+                        Patient patient = patients[CurrentPatientIndex];
+
+                        TextBox7.Text = patient.Name;
+                        TextBox8.Text = patient.DOB;
+                        TextBox9.Text = patient.Address;
+                        TextBox10.Text = patient.Mobile.ToString();
+                        TextBox11.Text = patient.PIN.ToString();
+                    }
+                }
+
+                object result = command.ExecuteScalar();
+
+                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", "" + result.ToString(), true);
+            }
+        }
+    }
+
     protected void Button1_Click(object sender, EventArgs e)
     {
+        // crear paciente
         string name = TextBox1.Text;
         string dob = TextBox2.Text;
         string address = TextBox3.Text;
@@ -106,6 +140,7 @@
 
     protected void TextBox6_TextChanged(object sender, EventArgs e)
     {
+        // buscar pacientes
         string searchQuery = TextBox6.Text;
 
         ListBox1.Items.Clear();
@@ -116,7 +151,6 @@
             {
                 conn.Open();
 
-                // Crear la consulta SQL para buscar pacientes por nombre
                 string query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
                 using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
                 {
@@ -124,13 +158,11 @@
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        // Recorrer los resultados y añadirlos al ListBox
                         while (reader.Read())
                         {
                             string patientName = reader.GetString(reader.GetOrdinal("name"));
                             int patientId = reader.GetInt32(reader.GetOrdinal("id"));
 
-                            // Añadir el paciente encontrado al ListBox
                             ListBox1.Items.Add(new ListItem(patientName, patientId.ToString()));
                         }
                     }
@@ -139,8 +171,7 @@
         }
         catch (Exception ex)
         {
-            // Manejo de errores en caso de que ocurra alguna excepción
-            ClientScript.RegisterStartupScript(this.GetType(), "SearchError", "alert('Error al buscar paciente: " + ex.Message + "');", true);
+            ClientScript.RegisterStartupScript(this.GetType(), "SearchError", "alert('Error searching for patient: " + ex.Message + "');", true);
         }
     }
 
@@ -148,9 +179,14 @@
     protected void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
         // seleccionar usuario
+        if (ListBox1.SelectedIndex < 0)
+        {
+            return;
+        }
+        Patient patient = patients[ListBox1.SelectedIndex];
+        currentPatientId = patient.Id;
 
-        // pedir un usuario
-        // mostrar info en los labels
+        CurrentPatientIndex = ListBox1.SelectedIndex;
     }
 
     protected void Button2_Click(object sender, EventArgs e)
@@ -265,7 +301,8 @@
 
                 <asp:Label ID="Label8" runat="server" Text="Search:"></asp:Label>
                 <asp:TextBox ID="TextBox6" runat="server" OnTextChanged="TextBox6_TextChanged"></asp:TextBox>
-                <asp:ListBox ID="ListBox1" runat="server" OnSelectedIndexChanged="ListBox1_SelectedIndexChanged"></asp:ListBox>
+                <asp:Button ID="Button7" runat="server" Text="Search" />
+                <asp:ListBox ID="ListBox1" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ListBox1_SelectedIndexChanged"></asp:ListBox>
             </div>
             <div>
                 <asp:Label ID="Label14" runat="server" Text="ID:"></asp:Label>
