@@ -37,7 +37,7 @@
     public class Record
     {
         public int Id { get; set; }
-        public int PatientId { get; set; }
+        public int idpat { get; set; }
         public string Date { get; set; }
         public string Diagnosis { get; set; }
         public string Treatment { get; set; }
@@ -203,58 +203,55 @@
             TextBox11.Text = selectedPatient.PIN.ToString();
 
             CurrentPatientIndex = selectedIndex;
-            
+
             // Ahora cargar los registros médicos del paciente
             LoadMedicalRecords(selectedPatient.Id);
         }
     }
 
     private void LoadMedicalRecords(int patientId)
-{
-    // Limpiar los elementos previos en el ListBox2
-    ListBox2.Items.Clear();
-
-    try
     {
-        // Consulta para obtener los registros médicos del paciente
-        using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
+        ListBox2.Items.Clear();
+
+        try
         {
-            conn.Open();
-
-            // Consulta SQL para obtener los registros médicos del paciente
-            string query = "SELECT * FROM records WHERE PatientId = @PatientId";
-            using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
+            using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
             {
-                cmd.Parameters.AddWithValue("@PatientId", patientId);
+                conn.Open();
 
-                // Ejecutar la consulta y obtener los resultados
-                using (var reader = cmd.ExecuteReader())
+                string query = "SELECT * FROM records WHERE idpat = @PatientId";
+                using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
                 {
-                    while (reader.Read())
-                    {
-                        // Crear un objeto Record para cada registro
-                        Record record = new Record
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("id")),
-                            PatientId = reader.GetInt32(reader.GetOrdinal("PatientId")),
-                            Date = reader.GetString(reader.GetOrdinal("Date")),
-                            Diagnosis = reader.GetString(reader.GetOrdinal("Diagnosis")),
-                            Treatment = reader.GetString(reader.GetOrdinal("Treatment"))
-                        };
+                    cmd.Parameters.AddWithValue("@PatientId", patientId);
 
-                        // Agregar el registro al ListBox2 (por ejemplo, mostrando solo la fecha y diagnóstico)
-                        ListBox2.Items.Add(new ListItem($"Date: {record.Date} - Diagnosis: {record.Diagnosis}", record.Id.ToString()));
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Record record = new Record
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                idpat = reader.GetInt32(reader.GetOrdinal("idpat")),
+                                Date = reader.GetString(reader.GetOrdinal("Date")),
+                                Diagnosis = reader.GetString(reader.GetOrdinal("Diagnosis")),
+                                Treatment = reader.GetString(reader.GetOrdinal("Treatment"))
+                            };
+
+                            records.Add(record);
+                            ListBox2.Items.Add(new ListItem($"Date: {record.Date}", record.Id.ToString()));
+
+                        }
                     }
                 }
             }
         }
+        catch (Exception ex)
+        {
+            // Manejo de errores si ocurre un problema con la base de datos
+            ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error loading records: {ex.Message}');", true);
+        }
+
     }
-    catch (Exception ex)
-    {
-        // Manejo de errores si ocurre un problema con la base de datos
-        ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error loading records: {ex.Message}');", true);
-    }
-}
     protected void Button2_Click(object sender, EventArgs e)
     {
         // guardar cambios del usuario
@@ -363,22 +360,40 @@
 
     protected void ListBox2_SelectedIndexChanged(object sender, EventArgs e)
     {
-        // seleccionar record
+        if (ListBox2.SelectedIndex >= 0)
+        {
+            int selectedIndex = ListBox2.SelectedIndex;
+
+            Record selectedRecord = null;
+
+            if (selectedIndex >= 0 && selectedIndex < records.Count)
+            {
+                selectedRecord = records[selectedIndex];
+            }
+
+            if (selectedRecord != null)
+            {
+                labelid_record.Text = selectedRecord.Id.ToString(); 
+
+                TextBox17.Text = selectedRecord.Date ?? "No disponible"; 
+                TextBox18.Text = selectedRecord.Diagnosis ?? "No disponible"; 
+                TextBox19.Text = selectedRecord.Treatment ?? "No disponible"; 
+            }
+        }
     }
+
 
     protected void Button4_Click(object sender, EventArgs e)
     {
-        // Verificar si el paciente está seleccionado
         if (CurrentPatientIndex < 0)
         {
             ClientScript.RegisterStartupScript(this.GetType(), "ValidationError", "alert('Please select a patient first.');", true);
             return;
         }
 
-        // Obtener los valores del formulario
-        string date = TextBox13.Text; // Fecha del registro
-        string diagnosis = TextBox14.Text; // Diagnóstico
-        string treatment = TextBox15.Text; // Tratamiento
+        string date = TextBox13.Text;
+        string diagnosis = TextBox14.Text; 
+        string treatment = TextBox15.Text; 
 
         if (string.IsNullOrWhiteSpace(date) || string.IsNullOrWhiteSpace(diagnosis) || string.IsNullOrWhiteSpace(treatment))
         {
@@ -386,18 +401,15 @@
             return;
         }
 
-        // Obtener el PatientId del paciente actual
         int patientId = patients[CurrentPatientIndex].Id;
 
         try
         {
-            // Insertar el nuevo registro en la base de datos
             using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
             {
                 conn.Open();
 
-                // Consulta SQL para insertar un nuevo registro médico
-                string query = "INSERT INTO records (PatientId, Date, Diagnosis, Treatment) VALUES (@PatientId, @Date, @Diagnosis, @Treatment)";
+                string query = "INSERT INTO records (idpat, Date, Diagnosis, Treatment) VALUES (@PatientId, @Date, @Diagnosis, @Treatment)";
                 using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@PatientId", patientId);
@@ -405,23 +417,18 @@
                     cmd.Parameters.AddWithValue("@Diagnosis", diagnosis);
                     cmd.Parameters.AddWithValue("@Treatment", treatment);
 
-                    cmd.ExecuteNonQuery(); // Ejecutar la consulta
+                    cmd.ExecuteNonQuery();
                 }
             }
 
-            // Una vez creado el registro, actualizar el ListBox2 con los nuevos registros médicos
             LoadMedicalRecords(patientId);
 
-            // Limpiar los campos del formulario
             TextBox13.Text = "";
             TextBox14.Text = "";
             TextBox15.Text = "";
-
-            ClientScript.RegisterStartupScript(this.GetType(), "Success", "alert('Medical record created successfully.');", true);
         }
         catch (Exception ex)
         {
-            // Manejo de errores
             ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error creating record: {ex.Message}');", true);
         }
     }
@@ -506,7 +513,7 @@
 
             <asp:Label ID="Label16" runat="server" Text="Search:"></asp:Label>
             <asp:TextBox ID="TextBox12" runat="server" OnTextChanged="TextBox12_TextChanged"></asp:TextBox>
-            <asp:ListBox ID="ListBox2" runat="server" OnSelectedIndexChanged="ListBox2_SelectedIndexChanged"></asp:ListBox>
+            <asp:ListBox ID="ListBox2" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ListBox2_SelectedIndexChanged"></asp:ListBox>
         </div>
         <div>
             <asp:Label ID="Label17" runat="server" Text="Date:"></asp:Label>
