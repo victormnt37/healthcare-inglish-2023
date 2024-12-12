@@ -56,7 +56,6 @@
             ListBox1.Items.Clear();
 
             string searchQuery = TextBox6.Text;
-            //patients.Clear();
 
             using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
             {
@@ -87,7 +86,6 @@
                             }
                             catch (Exception ex)
                             {
-                                // Registra el error o muestra información para depuración
                                 ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error  in Page Load: {ex.Message}');", true);
                             }
 
@@ -220,6 +218,12 @@
         string mobile = TextBox10.Text;
         string pin = TextBox11.Text;
 
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "ValidationError", "alert('Name cannot be empty.');", true);
+            return;
+        }
+
         string query = "UPDATE users SET name = @Name, DOB = @DOB, address = @Address, mobile = @Mobile, PIN = @PIN WHERE id = @Id";
 
         try
@@ -237,11 +241,28 @@
                     command.Parameters.AddWithValue("@PIN", pin);
                     command.Parameters.AddWithValue("@Id", currentPatientId);
 
-                    object result = command.ExecuteScalar();
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        Patient patient = patients.FirstOrDefault(p => p.Id == currentPatientId);
+                        if (patient != null)
+                        {
+                            patient.Name = name;
+                            patient.DOB = dob;
+                            patient.Address = address;
+                            patient.Mobile = Convert.ToInt32(mobile);
+                            patient.PIN = pin;
+                        }
+
+                        ClientScript.RegisterStartupScript(this.GetType(), "Success", "alert('Data submited successfully');", true);
+                    }
+                    else
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "Error", "alert('Couldn't update the user.');", true);
+                    }
                 }
             }
-
-            // modificar datos clase Patient
         }
         catch (Exception ex)
         {
