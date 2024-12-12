@@ -279,7 +279,7 @@
             if (ListBox1.SelectedItem != null)
             {
                 // Obtener el ID del usuario seleccionado
-                string selectedId = ListBox1.SelectedValue;
+                int selectedId = patients[CurrentPatientIndex].Id;
 
                 using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
                 {
