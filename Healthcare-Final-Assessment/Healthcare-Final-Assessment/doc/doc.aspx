@@ -48,6 +48,13 @@
 
         connectionString = $"Data Source={databasePath};Version=3;";
 
+        string role = (string)(Session["UserRole"]);
+
+        if (role != "Doctor")
+        {
+            Response.Redirect("~/login.aspx");
+        }
+
         if (!IsPostBack)
         {
             UpdatePatientList();
@@ -83,7 +90,7 @@
                             };
 
                             patients.Add(patient);
-                            ListBox1.Items.Add(reader.GetString(reader.GetOrdinal("name")));
+                            ListBox1.Items.Add(reader.GetString(reader.GetOrdinal("PIN")));
                         }
                         catch (Exception ex)
                         {
@@ -175,7 +182,7 @@
             {
                 conn.Open();
 
-                string query = "SELECT * FROM Users WHERE name LIKE @SearchQuery";
+                string query = "SELECT * FROM Users WHERE PIN LIKE @SearchQuery";
                 using (var cmd = new System.Data.SQLite.SQLiteCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@SearchQuery", "%" + searchQuery + "%");
@@ -195,7 +202,7 @@
                                 PIN = reader.GetString(reader.GetOrdinal("PIN"))
                             };
 
-                            ListBox1.Items.Add(new ListItem(patient.Name, patient.Id.ToString()));
+                            ListBox1.Items.Add(new ListItem(patient.PIN, patient.Id.ToString()));
                             patients.Add(patient);
                         }
                     }

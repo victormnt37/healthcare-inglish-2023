@@ -23,52 +23,63 @@
 
         connectionString = $"Data Source={databasePath};Version=3;";
 
-        // lista pacientes
+        string role = (string)(Session["UserRole"]);
+
+        if (role != "Patient")
+        {
+            Response.Redirect("~/login.aspx");
+        }
+
         if (!IsPostBack)
         {
-            records.Clear();
-            ListBox2.Items.Clear();
+            UpdateRecordsList();
+        }
+    }
 
-            string searchQuery = TextBox12.Text;
+    private void UpdateRecordsList()
+    {
+        records.Clear();
+        ListBox2.Items.Clear();
 
-            using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+        string searchQuery = TextBox12.Text;
+
+        using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+        {
+            connection.Open();
+
+            string pin = (string)(Session["PIN"]);
+
+            string query = "SELECT r.* FROM users u JOIN records r ON u.id = r.idpat WHERE u.PIN = @PIN;";
+
+            using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
             {
-                connection.Open();
+                command.Parameters.AddWithValue("@PIN", pin);
 
-                string pin = (string)(Session["PIN"]);
-
-                string query = "SELECT r.* FROM users u JOIN records r ON u.id = r.idpat WHERE u.PIN = @PIN;";
-
-                using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
+                using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    command.Parameters.AddWithValue("@PIN", pin);
-
-                    using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        try
                         {
-                            try
+                            Record record = new Record
                             {
-                                Record record = new Record
-                                {
-                                    Id = reader.IsDBNull(reader.GetOrdinal("id")) ? 0 : Convert.ToInt32(reader["id"]),
-                                    PatientId = reader.IsDBNull(reader.GetOrdinal("idpat")) ? 0 : Convert.ToInt32(reader["id"]),
-                                    Date = reader.IsDBNull(reader.GetOrdinal("date")) ? string.Empty : reader["date"].ToString(),
-                                    Diagnosis = reader.IsDBNull(reader.GetOrdinal("diagnosis")) ? string.Empty : reader["diagnosis"].ToString(),
-                                    Treatment = reader.IsDBNull(reader.GetOrdinal("treatment")) ? string.Empty : reader["treatment"].ToString(),
-                                };
+                                Id = reader.IsDBNull(reader.GetOrdinal("id")) ? 0 : Convert.ToInt32(reader["id"]),
+                                PatientId = reader.IsDBNull(reader.GetOrdinal("idpat")) ? 0 : Convert.ToInt32(reader["id"]),
+                                Date = reader.IsDBNull(reader.GetOrdinal("date")) ? string.Empty : reader["date"].ToString(),
+                                Diagnosis = reader.IsDBNull(reader.GetOrdinal("diagnosis")) ? string.Empty : reader["diagnosis"].ToString(),
+                                Treatment = reader.IsDBNull(reader.GetOrdinal("treatment")) ? string.Empty : reader["treatment"].ToString(),
+                            };
 
-                                records.Add(record);
-                                ListBox2.Items.Add(reader.GetString(reader.GetOrdinal("diagnosis")));
-                            }
-                            catch (Exception ex)
-                            {
-                                ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error  in Page Load: {ex.Message}');", true);
-                            }
+                            records.Add(record);
+                            ListBox2.Items.Add(reader.GetString(reader.GetOrdinal("diagnosis")));
+                        }
+                        catch (Exception ex)
+                        {
+                            ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error  in Page Load: {ex.Message}');", true);
                         }
                     }
-                    object result = command.ExecuteScalar();
                 }
+                object result = command.ExecuteScalar();
             }
         }
     }
@@ -133,11 +144,11 @@
 
             if (selectedRecord != null)
             {
-                labelid_record.Text = selectedRecord.Id.ToString(); 
+                labelid_record.Text = selectedRecord.Id.ToString();
 
                 labeldate.Text = selectedRecord.Date ?? "Not avalaible";
-                labelDiagnosis.Text = selectedRecord.Diagnosis ?? "Not avalaible"; 
-                labelTreatment.Text = selectedRecord.Treatment ?? "Not avalaible"; 
+                labelDiagnosis.Text = selectedRecord.Diagnosis ?? "Not avalaible";
+                labelTreatment.Text = selectedRecord.Treatment ?? "Not avalaible";
             }
         }
     }
