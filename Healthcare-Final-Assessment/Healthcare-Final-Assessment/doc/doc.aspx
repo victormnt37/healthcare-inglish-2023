@@ -48,50 +48,48 @@
 
         connectionString = $"Data Source={databasePath};Version=3;";
 
-        // lista pacientes
         if (!IsPostBack)
         {
-            patients.Clear();
-            ListBox1.Items.Clear();
+            UpdatePatientList();
+        }
+    }
 
-            string searchQuery = TextBox6.Text;
+    private void UpdatePatientList()
+    {
+        patients.Clear();
+        ListBox1.Items.Clear();
 
-            using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+        using (System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string query = "SELECT * FROM users WHERE isDoctor != 0";
+
+            using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
             {
-                connection.Open();
-
-                string query = "SELECT * FROM users WHERE isDoctor != 0";
-
-                using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(query, connection))
+                using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        try
                         {
-                            try
+                            Patient patient = new Patient
                             {
-                                Patient patient = new Patient
-                                {
-                                    Id = reader.IsDBNull(reader.GetOrdinal("id")) ? 0 : Convert.ToInt32(reader["id"]),
-                                    Name = reader.IsDBNull(reader.GetOrdinal("name")) ? string.Empty : reader["name"].ToString(),
-                                    DOB = reader.IsDBNull(reader.GetOrdinal("DOB")) ? string.Empty : reader["DOB"].ToString(),
-                                    Address = reader.IsDBNull(reader.GetOrdinal("address")) ? string.Empty : reader["address"].ToString(),
-                                    Mobile = reader.IsDBNull(reader.GetOrdinal("mobile")) ? 0 : Convert.ToInt32(reader["mobile"]),
-                                    PIN = reader.IsDBNull(reader.GetOrdinal("PIN")) ? string.Empty : reader["PIN"].ToString()
-                                };
+                                Id = reader.IsDBNull(reader.GetOrdinal("id")) ? 0 : Convert.ToInt32(reader["id"]),
+                                Name = reader.IsDBNull(reader.GetOrdinal("name")) ? string.Empty : reader["name"].ToString(),
+                                DOB = reader.IsDBNull(reader.GetOrdinal("DOB")) ? string.Empty : reader["DOB"].ToString(),
+                                Address = reader.IsDBNull(reader.GetOrdinal("address")) ? string.Empty : reader["address"].ToString(),
+                                Mobile = reader.IsDBNull(reader.GetOrdinal("mobile")) ? 0 : Convert.ToInt32(reader["mobile"]),
+                                PIN = reader.IsDBNull(reader.GetOrdinal("PIN")) ? string.Empty : reader["PIN"].ToString()
+                            };
 
-                                patients.Add(patient);
-                                ListBox1.Items.Add(reader.GetString(reader.GetOrdinal("name")));
-                            }
-                            catch (Exception ex)
-                            {
-                                ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error  in Page Load: {ex.Message}');", true);
-                            }
-
+                            patients.Add(patient);
+                            ListBox1.Items.Add(reader.GetString(reader.GetOrdinal("name")));
+                        }
+                        catch (Exception ex)
+                        {
+                            ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error  in UpdatePatientList: {ex.Message}');", true);
                         }
                     }
-                    object result = command.ExecuteScalar();
-                    ClientScript.RegisterStartupScript(this.GetType(), "Users list", "" + result.ToString(), true);
                 }
             }
         }
@@ -155,6 +153,7 @@
                     TextBox16.Text = "";
                 }
             }
+            UpdatePatientList();
         }
         catch (Exception ex)
         {
