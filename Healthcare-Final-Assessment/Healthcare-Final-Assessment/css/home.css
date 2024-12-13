@@ -35,6 +35,10 @@
                 padding: 1rem;
             }
 
+            body div#main #loginLayout #Image1, #Image2 {
+                width: 100px;
+            }
+
 header {
     display: flex;
     justify-content: center;
