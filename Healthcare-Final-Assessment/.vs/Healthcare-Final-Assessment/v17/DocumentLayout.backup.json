@@ -3,24 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6348055D-BD11-481A-B037-BDE9755DD998}|Healthcare-Final-Assessment\\Healthcare-Final-Assessment.csproj|C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\healthcare-final-assessment\\doc\\doc.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "AbsoluteMoniker": "D:0:0:{6348055D-BD11-481A-B037-BDE9755DD998}|Healthcare-Final-Assessment\\Healthcare-Final-Assessment.csproj|c:\\users\\victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\healthcare-final-assessment\\healthcare-final-assessment\\doc\\doc.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{6348055D-BD11-481A-B037-BDE9755DD998}|Healthcare-Final-Assessment\\Healthcare-Final-Assessment.csproj|solutionrelative:healthcare-final-assessment\\doc\\doc.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\pat\\pat.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Healthcare-Final-Assessment\\pat\\pat.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Healthcare-Final-Assessment\\login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\index.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Healthcare-Final-Assessment\\index.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6348055D-BD11-481A-B037-BDE9755DD998}|Healthcare-Final-Assessment\\Healthcare-Final-Assessment.csproj|c:\\users\\victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\healthcare-final-assessment\\healthcare-final-assessment\\css\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{6348055D-BD11-481A-B037-BDE9755DD998}|Healthcare-Final-Assessment\\Healthcare-Final-Assessment.csproj|solutionrelative:healthcare-final-assessment\\css\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{6348055D-BD11-481A-B037-BDE9755DD998}|Healthcare-Final-Assessment\\Healthcare-Final-Assessment.csproj|c:\\users\\victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\healthcare-final-assessment\\healthcare-final-assessment\\index.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{6348055D-BD11-481A-B037-BDE9755DD998}|Healthcare-Final-Assessment\\Healthcare-Final-Assessment.csproj|solutionrelative:healthcare-final-assessment\\index.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,50 +18,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 81,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "index.css",
-              "DocumentMoniker": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\css\\index.css",
-              "RelativeDocumentMoniker": "Healthcare-Final-Assessment\\css\\index.css",
-              "ToolTip": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\css\\index.css",
-              "RelativeToolTip": "Healthcare-Final-Assessment\\css\\index.css",
-              "ViewState": "AgIAADwAAAAAAAAAAAAAAEcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2024-12-12T17:56:05.387Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "index.aspx",
-              "DocumentMoniker": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\index.aspx",
-              "RelativeDocumentMoniker": "Healthcare-Final-Assessment\\index.aspx",
-              "ToolTip": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\index.aspx",
-              "RelativeToolTip": "Healthcare-Final-Assessment\\index.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-12-12T17:46:56.18Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "pat.aspx",
-              "DocumentMoniker": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\pat\\pat.aspx",
-              "RelativeDocumentMoniker": "Healthcare-Final-Assessment\\pat\\pat.aspx",
-              "ToolTip": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\pat\\pat.aspx",
-              "RelativeToolTip": "Healthcare-Final-Assessment\\pat\\pat.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-12-12T14:34:52.192Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -85,20 +34,20 @@
               "RelativeToolTip": "Healthcare-Final-Assessment\\doc\\doc.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-12-11T19:54:44.456Z",
+              "WhenOpened": "2024-12-13T15:41:26.615Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "login.aspx",
-              "DocumentMoniker": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\login.aspx",
-              "RelativeDocumentMoniker": "Healthcare-Final-Assessment\\login.aspx",
-              "ToolTip": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\login.aspx",
-              "RelativeToolTip": "Healthcare-Final-Assessment\\login.aspx",
+              "DocumentIndex": 1,
+              "Title": "index.aspx",
+              "DocumentMoniker": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\index.aspx",
+              "RelativeDocumentMoniker": "Healthcare-Final-Assessment\\index.aspx",
+              "ToolTip": "C:\\Users\\Victor\\source\\repos\\victormnt37\\healthcare-inglish-2023\\Healthcare-Final-Assessment\\Healthcare-Final-Assessment\\index.aspx",
+              "RelativeToolTip": "Healthcare-Final-Assessment\\index.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-12-11T18:46:10.966Z",
+              "WhenOpened": "2024-12-13T15:33:24.283Z",
               "EditorCaption": ""
             }
           ]

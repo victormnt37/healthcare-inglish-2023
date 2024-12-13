@@ -104,7 +104,6 @@
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-        // crear paciente
         string name = TextBox1.Text;
         string dob = TextBox2.Text;
         string address = TextBox3.Text;
@@ -121,7 +120,6 @@
         }
 
 
-        // Validación de dirección como correo electrónico
         string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         Regex emailRegex = new Regex(emailPattern);
         if (!emailRegex.IsMatch(address))
@@ -130,7 +128,6 @@
             return;
         }
 
-        // Validación de número móvil
         if (!long.TryParse(mobile, out _))
         {
             Response.Write("Error: El número móvil debe contener solo caracteres numéricos.");
@@ -170,7 +167,6 @@
 
     protected void TextBox6_TextChanged(object sender, EventArgs e)
     {
-        // buscar pacientes
         string searchQuery = TextBox6.Text;
 
         patients.Clear();
@@ -219,7 +215,7 @@
     {
         if (ListBox1.SelectedIndex >= 0)
         {
-            int selectedIndex = ListBox1.SelectedIndex; // recibir por patient id
+            int selectedIndex = ListBox1.SelectedIndex;
 
             Patient selectedPatient = patients[selectedIndex];
             currentPatientId = selectedPatient.Id;
@@ -232,7 +228,6 @@
 
             CurrentPatientIndex = selectedIndex;
 
-            // Ahora cargar los registros médicos del paciente
             LoadMedicalRecords(selectedPatient.Id);
         }
     }
@@ -276,7 +271,6 @@
         }
         catch (Exception ex)
         {
-            // Manejo de errores si ocurre un problema con la base de datos
             ClientScript.RegisterStartupScript(this.GetType(), "Error", $"alert('Error loading records: {ex.Message}');", true);
         }
 
@@ -284,7 +278,6 @@
 
     protected void Button2_Click(object sender, EventArgs e)
     {
-        // guardar cambios del usuario
         if (currentPatientId == 0)
         {
             return;
@@ -350,12 +343,10 @@
 
     protected void Button3_Click(object sender, EventArgs e)
     {
-        // eliminar el usuario
         try
         {
             if (ListBox1.SelectedItem != null)
             {
-                // Obtener el ID del usuario seleccionado
                 int selectedId = patients[CurrentPatientIndex].Id;
 
                 using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
@@ -366,9 +357,15 @@
                     {
                         cmd.Parameters.AddWithValue("@Id", selectedId);
                         cmd.ExecuteNonQuery();
-
+                        TextBox7.Text = "";
+                        TextBox8.Text = "";
+                        TextBox9.Text = "";
+                        TextBox10.Text = "";
+                        TextBox11.Text = "";
                     }
                 }
+                UpdatePatientList();
+
 
                 Response.Write("Usuario eliminado con éxito.");
             }
@@ -385,7 +382,6 @@
 
     protected void TextBox12_TextChanged(object sender, EventArgs e)
     {
-        // buscar records del usuario
     }
 
     protected void ListBox2_SelectedIndexChanged(object sender, EventArgs e)
