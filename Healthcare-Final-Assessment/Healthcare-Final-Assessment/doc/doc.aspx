@@ -107,6 +107,31 @@
         string pin = TextBox5.Text;
         string password = TextBox16.Text;
 
+        string passwordPattern = @"^(?=.*[A-Z])(?=.*[a-z])(?=(.*\d){2})[A-Za-z\d]{6,}$";
+        Regex passwordRegex = new Regex(passwordPattern);
+        if (!passwordRegex.IsMatch(password))
+        {
+            Response.Write("Error: La contraseña debe tener al menos 6 caracteres, contener al menos 2 números, una letra mayúscula y una letra minúscula.");
+            return;
+        }
+
+
+        // Validación de dirección como correo electrónico
+        string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        Regex emailRegex = new Regex(emailPattern);
+        if (!emailRegex.IsMatch(address))
+        {
+            Response.Write("Error: La dirección debe ser un correo electrónico válido.");
+            return;
+        }
+
+        // Validación de número móvil
+        if (!long.TryParse(mobile, out _))
+        {
+            Response.Write("Error: El número móvil debe contener solo caracteres numéricos.");
+            return;
+        }
+
         try
         {
             using (var conn = new System.Data.SQLite.SQLiteConnection(connectionString))
