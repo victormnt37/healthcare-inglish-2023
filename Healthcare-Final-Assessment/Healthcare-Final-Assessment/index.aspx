@@ -18,7 +18,7 @@
 <head runat="server">
     <meta charset="utf-8" />
     <title></title>
-    <link href="css/home.css" rel="stylesheet" />
+    <link href="css/index.css" rel="stylesheet" />
 </head>
 <body>
     <form id="form1" runat="server">

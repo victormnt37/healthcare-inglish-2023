@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="doc\doc.aspx" />
-    <Content Include="css\home.css" />
+    <Content Include="css\index.css" />
     <Content Include="img\stockImageHealthCenter.jpg" />
     <Content Include="img\stockImageHealthCenter2.jpg" />
     <Content Include="Web.config" />
