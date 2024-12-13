@@ -11,16 +11,12 @@
         <asp:Label ID="Label1" runat="server" Text="Login" Font-Bold="True"></asp:Label>
         <br />
         <div>
-            <asp:Label ID="Label2" runat="server" Text="Username:"></asp:Label>
+            <asp:Label ID="Label2" runat="server" Text="PIN:"></asp:Label>
             <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
         </div>
         <div>
             <asp:Label ID="Label3" runat="server" Text="Password:"></asp:Label>
-            <asp:TextBox ID="TextBox2" runat="server"></asp:TextBox>
-        </div>
-        <div>
-            <asp:Label ID="Label4" runat="server" Text="PIN:"></asp:Label>
-            <asp:TextBox ID="TextBox4" runat="server"></asp:TextBox>
+            <asp:TextBox ID="TextBox2" runat="server" TextMode="Password"></asp:TextBox>
         </div>
         <asp:Button ID="Button1" runat="server" Text="Login" OnClick="Button1_Click" />
     </form>
@@ -28,14 +24,13 @@
     <script runat="server">
         protected void Button1_Click(object sender, EventArgs e)
         {
-            string username = TextBox1.Text;
+            string pin = TextBox1.Text;
             string password = TextBox2.Text;
-            string pin = TextBox4.Text;
 
             string databasePath = Server.MapPath("~/healthcare.db");
             string connectionString = $"Data Source={databasePath};Version=3;";
 
-            string query = "SELECT isDoctor FROM Users WHERE name = @Username AND password = @Password";
+            string query = "SELECT isDoctor FROM Users WHERE pin = @pin AND password = @Password";
 
             try
             {
@@ -46,7 +41,7 @@
                     using (var command = new System.Data.SQLite.SQLiteCommand(query, connection))
                     {
 
-                        command.Parameters.AddWithValue("@Username", username);
+                        command.Parameters.AddWithValue("@pin", pin);
                         command.Parameters.AddWithValue("@Password", password);
 
                         object result = command.ExecuteScalar();
@@ -55,7 +50,6 @@
                         {
                             int isDoctor = Convert.ToInt32(result);
 
-                            Session["Username"] = username;
                             Session["PIN"] = pin;
 
                             if (isDoctor == 0)
