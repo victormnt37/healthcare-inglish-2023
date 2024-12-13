@@ -10,6 +10,10 @@
         margin-top: 50px;
     }
 
+    body div#main * {
+        margin: 10px;
+    }
+
         body div#main #loginLayout {
             display: flex;
             flex-direction: column;
@@ -35,9 +39,9 @@
                 padding: 1rem;
             }
 
-            body div#main #loginLayout #Image1, #Image2 {
-                width: 100px;
-            }
+        body div#main #Image1, #Image2 {
+            width: 300px;
+        }
 
 header {
     display: flex;
@@ -75,5 +79,20 @@ footer {
 @media (max-width: 768px) {
     body div#main {
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+        body div#main #Image1, #Image2 {
+            width: 250px;
+        }
+
+        body div#main #Image2 {
+            margin-bottom: 50px;
+        }
+
+    footer {
+        padding-bottom: 20px;
+        padding-top: 20px;
     }
 }
